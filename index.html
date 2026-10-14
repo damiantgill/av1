@@ -75,6 +75,27 @@
   #hero.gone {
     opacity: 0;
   }
+  /* Castle shakes when the hero enters, then settles down */
+  #castle-shake {
+    transform-box: view-box;
+    transform-origin: 189.5px 378px; /* bottom-centre of the castle */
+  }
+  #castle-shake.shaking {
+    animation: castle-shake 1.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  }
+  @keyframes castle-shake {
+    0%   { transform: translate(0, 0) rotate(0); }
+    10%  { transform: translate(-6px, 1px) rotate(-1.2deg); }
+    20%  { transform: translate(6px, -1px) rotate(1.1deg); }
+    30%  { transform: translate(-5px, 1px) rotate(-0.9deg); }
+    40%  { transform: translate(4px, 0) rotate(0.7deg); }
+    50%  { transform: translate(-3px, 1px) rotate(-0.5deg); }
+    60%  { transform: translate(2px, 0) rotate(0.35deg); }
+    70%  { transform: translate(-1.5px, 0) rotate(-0.2deg); }
+    80%  { transform: translate(1px, 0) rotate(0.1deg); }
+    90%  { transform: translate(-0.5px, 0) rotate(0); }
+    100% { transform: translate(0, 0) rotate(0); }
+  }
   @keyframes hero-bob {
     0%, 100% { transform: translateY(0); }
     50%      { transform: translateY(-8px); }
@@ -230,6 +251,13 @@
   const door = $('door');
   const hero = $('hero');
 
+  // Group the castle with its hall (and door) so they shake together
+  const castle = $('Castle');
+  const castleShake = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  castleShake.id = 'castle-shake';
+  castle.parentNode.insertBefore(castleShake, castle);
+  castleShake.append(castle, hall, door);
+
   const toggles = {
     'shield-button': $('shield'),
     'tie-button': $('tie'),
@@ -285,6 +313,7 @@
       if (e.target !== hero || e.propertyName !== 'transform') return;
       hero.removeEventListener('transitionend', onArrive);
       hero.classList.add('arrived', 'gone');
+      castleShake.classList.add('shaking');
     });
   });
 })();
